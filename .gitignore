@@ -1,0 +1,10 @@
+logs/*
+!.gitkeep
+node_modules/
+dist/
+tmp
+.DS_Store
+package-lock.json
+.idea
+*.log
+*.bat
