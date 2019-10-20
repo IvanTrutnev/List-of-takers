@@ -1,3 +1,4 @@
+import './index.css';
 import { UsersList } from './components/UsersList';
 const columns = [ 'Address', 'Email', 'Firstname', 'Gender', 'Lastname', 'Login', 'Password', 'Title' ];
 const limit = 10;

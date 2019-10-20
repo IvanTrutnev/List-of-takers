@@ -7,5 +7,5 @@ For sortings row click to appropriate columns.
 
 # To include users list component to your app
 - Copy Userslist.js file to your app.
-- Copy usersList.css file to your app.
+- Copy UsersList.css file to your app.
 - create instance of Userslist. add params data, columnd, limit, wrapper element
