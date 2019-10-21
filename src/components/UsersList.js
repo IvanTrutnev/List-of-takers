@@ -7,7 +7,7 @@ export class UsersList {
 		this.wrapper = wrapperElem;
 	}
 
-	generateDataDetails(data) {
+	_generateDataDetails(data) {
 		let reportStr = '';
 		Object.keys(data).forEach((key) => {
 			if (key === 'id' || key === 'picture') return;
@@ -17,7 +17,13 @@ export class UsersList {
 		return reportStr;
 	}
 
-	generateTable(data, columns) {
+	_showUserInfo(userID) {
+		const user = this.data.find((item) => item.id == userID);
+		const reportData = this._generateDataDetails(user);
+		alert(reportData);
+	}
+
+	_generateTable(data, columns) {
 		const table = document.createElement('table');
 		const tHead = document.createElement('thead');
 		const tBody = document.createElement('tbody');
@@ -46,36 +52,14 @@ export class UsersList {
 		table.ondblclick = (event) => {
 			if (event.target.tagName === 'TD') {
 				const userID = event.target.parentNode.dataset.id;
-				this.showUserInfo(userID);
+				this._showUserInfo(userID);
 			}
 		};
 
 		return table;
 	}
 
-	showUserInfo(userID) {
-		const user = this.data.find((item) => item.id == userID);
-		const reportData = this.generateDataDetails(user);
-		alert(reportData);
-	}
-
-	makeSortable(table) {
-		let tHead = table.tHead,
-			i;
-		tHead && (tHead = tHead.rows[0]) && (tHead = tHead.cells);
-		if (tHead) i = tHead.length;
-		else return;
-		while (--i >= 0) {
-			((i) => {
-				let dir = 1;
-				tHead[i].addEventListener('click', () => {
-					this.sortTable(table, i, (dir = 1 - dir));
-				});
-			})(i);
-		}
-	}
-
-	sortTable(table, col, reverse) {
+	_sortTable(table, col, reverse) {
 		let tBody = table.tBodies[0],
 			tRows = Array.prototype.slice.call(tBody.rows, 0),
 			i;
@@ -86,25 +70,45 @@ export class UsersList {
 		for (i = 0; i < tRows.length; ++i) tBody.appendChild(tRows[i]);
 	}
 
-	makeAllSortable(parent = document.body) {
-		const table = parent.getElementsByTagName('table');
-		let i = table.length;
-		while (--i >= 0) this.makeSortable(table[i]);
+	_makeSortable(table) {
+		let tHead = table.tHead,
+			i;
+		tHead && (tHead = tHead.rows[0]) && (tHead = tHead.cells);
+		if (tHead) i = tHead.length;
+		else return;
+		while (--i >= 0) {
+			((i) => {
+				let dir = 1;
+				tHead[i].addEventListener('click', () => {
+					this._sortTable(table, i, (dir = 1 - dir));
+				});
+			})(i);
+		}
 	}
 
-	render() {
-		const users = this.data
+	_makeAllSortable(parent = document.body) {
+		const table = parent.getElementsByTagName('table');
+		let i = table.length;
+		while (--i >= 0) this._makeSortable(table[i]);
+	}
+
+	_prepareData() {
+		return this.data
 			.map((item, index) => {
 				item.id = index;
 				return item;
 			})
 			.filter((_, index) => index < this.limit);
+	}
+
+	render() {
+		const dataList = this._prepareData();
 		const root = this.wrapperElem || document.createElement('div');
 		root.classList.add('wrapper');
-		const table = this.generateTable(users, this.columns);
+		const table = this._generateTable(dataList, this.columns);
 		table.classList.add('users-table');
 		root.appendChild(table);
 		document.body.appendChild(root);
-		this.makeAllSortable();
+		this._makeAllSortable();
 	}
 }
